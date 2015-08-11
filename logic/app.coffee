@@ -8,12 +8,12 @@ $ ->
 
     initialize: ->
       @data.gameOver = false
-      @.setPlayerNames()
-      @.retrieveStats()
-      @.assignRoles()
-      @.prepareBoard()
-      @.updateNotifications()
-      @.addListeners()
+      @setPlayerNames()
+      @retrieveStats()
+      @assignRoles()
+      @prepareBoard()
+      @updateNotifications()
+      @addListeners()
 
     setPlayerNames: ->
       @data.player1 = $("input[name='pl-1']").val()
@@ -33,7 +33,7 @@ $ ->
       $("form").hide()
       $("#board").empty()
       $(".alerts").removeClass("welcome").show()
-      $(".alerts").text("#{@.getPlayerName("X")} Goes First")
+      $(".alerts").text("#{@getPlayerName("X")} Goes First")
       $("<div>", {class: "square"}).appendTo("#board") for square in [0..8]
 
     assignRoles: ->
@@ -45,13 +45,13 @@ $ ->
 
     updateNotifications: ->
       $(".notifications").empty().show()
-      @.addNotification "#{@data.player1} is playing #{@data.rolep1}"
-      @.addNotification "#{@data.player2} is playing #{@data.rolep2}"
-      @.addNotification "#{@data.player1} has #{@data.p1stats.wins} wins and #{@data.p1stats.loses} loses"
-      @.addNotification "#{@data.player2} has #{@data.p2stats.wins} wins and #{@data.p2stats.loses} loses"
+      @addNotification "#{@data.player1} is playing #{@data.rolep1}"
+      @addNotification "#{@data.player2} is playing #{@data.rolep2}"
+      @addNotification "#{@data.player1} has #{@data.p1stats.wins} wins and #{@data.p1stats.loses} loses"
+      @addNotification "#{@data.player2} has #{@data.p2stats.wins} wins and #{@data.p2stats.loses} loses"
 
     addNotification: (msg) ->
-      $(".notifications").append($("<p>", {text: msg}));
+      $(".notifications").append($("<p>", {text: msg}))
 
     addListeners: ->
       $(".square").click ->
@@ -63,52 +63,52 @@ $ ->
           if Tic.data.gameOver isnt yes and $(".moved").length >= 9 then Tic.addToScore("none")
 
     checkEnd : ->
-      @.data.x = {}
-      @.data.o = {}
+      @data.x = {}
+      @data.o = {}
 
       #diagonal check
       diagonals = [[0,4,8], [2,4,6]]
       for diagonal in diagonals
          for col in diagonal
-           @.checkField(col, 'diagonal')
-         @.checkWin()
-         @.emptyStorageVar('diagonal')
+           @checkField(col, 'diagonal')
+         @checkWin()
+         @emptyStorageVar('diagonal')
       for row in [0..2]
         start = row * 3
         end = (row * 3) + 2
         middle = (row * 3) + 1
 
         #vertical check
-        @.checkField(start, 'start')
-        @.checkField(middle, 'middle')
-        @.checkField(end, 'end')
-        @.checkWin()
+        @checkField(start, 'start')
+        @checkField(middle, 'middle')
+        @checkField(end, 'end')
+        @checkWin()
 
         # horizontal check
         for column in [start..end]
-          @.checkField(column, 'horizontal')
-        @.checkWin()
-        @.emptyStorageVar('horizontal')
+          @checkField(column, 'horizontal')
+        @checkWin()
+        @emptyStorageVar('horizontal')
 
     checkField: (field, storageVar) ->
       if $(".square").eq(field).hasClass("x")
-        if @.data.x[storageVar]? then @.data.x[storageVar]++ else @.data.x[storageVar] = 1
+        if @data.x[storageVar]? then @data.x[storageVar]++ else @data.x[storageVar] = 1
       else if $(".square").eq(field).hasClass("o")
-        if @.data.o[storageVar]? then @.data.o[storageVar]++ else @.data.o[storageVar] = 1
+        if @data.o[storageVar]? then @data.o[storageVar]++ else @data.o[storageVar] = 1
 
     checkWin: ->
-      for key,value of @.data.x
+      for key,value of @data.x
         if value >= 3
           localStorage.x++
-          @.showAlert "#{@.getPlayerName("X")} wins"
-          @.data.gameOver = true
-          @.addToScore("X")
-      for key,value of @.data.o
+          @showAlert "#{@getPlayerName("X")} wins"
+          @data.gameOver = true
+          @addToScore("X")
+      for key,value of @data.o
         if value >= 3
           localStorage.o++
-          @.showAlert "#{@.getPlayerName("O")} wins"
-          @.data.gameOver = true
-          @.addToScore("O")
+          @showAlert "#{@getPlayerName("O")} wins"
+          @data.gameOver = true
+          @addToScore("O")
 
     addToScore: (winningParty) ->
       @data.turns = 0
@@ -116,18 +116,18 @@ $ ->
       @data.o = {}
       @data.gameOver = yes
       if winningParty is "none"
-        @.showAlert "The game was a tie"
+        @showAlert "The game was a tie"
       else
         if @data.rolep1 == winningParty then ++@data.p1stats.wins else ++@data.p1stats.loses
         if @data.rolep2 == winningParty then ++@data.p2stats.wins else ++@data.p2stats.loses
         localStorage[@data.player1] = JSON.stringify @data.p1stats
         localStorage[@data.player2] = JSON.stringify @data.p2stats
-      @.updateNotifications()
+      @updateNotifications()
       $(".notifications").append "<a class='play-again'>Play Again?</a>"
 
     emptyStorageVar: (storageVar) ->
-      @.data.x[storageVar] = null
-      @.data.o[storageVar] = null
+      @data.x[storageVar] = null
+      @data.o[storageVar] = null
 
     showAlert: (msg) ->
       $(".alerts").text(msg).slideDown()
@@ -137,7 +137,7 @@ $ ->
     $inputs = $("input[type='text']")
 
     namesNotEntered = $inputs.filter(->
-      return @.value.trim() isnt ""
+      return @value.trim() isnt ""
     ).length isnt 2
 
     namesIndentical = $inputs[0].value is $inputs[1].value
